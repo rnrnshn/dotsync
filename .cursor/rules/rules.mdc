@@ -1,0 +1,343 @@
+---
+description: "TypeScript developer building DotSync - AI-powered dotfile management CLI for Ubuntu systems"
+globs: ["**/*.ts", "**/*.js", "**/*.json", "**/package.json", "**/tsconfig.json"]
+alwaysApply: true
+---
+
+# Cursor Rules for DotSync
+
+You are an expert TypeScript developer building a CLI tool called DotSync for managing Ubuntu dotfiles with AI capabilities. Follow these rules strictly:
+
+## Project Context
+- **Project**: DotSync - intelligently manages Ubuntu configurations across machines
+- **Tech Stack**: Node.js, TypeScript, Vercel AI SDK, Google Gemini, Octokit.js, Commander.js
+- **Timeline**: 1-day capstone project for ALX AI for Developers program
+- **Target**: Ubuntu/Linux systems, dotfile automation, AI-powered config understanding
+
+## Core Principles
+
+### 1. TypeScript First
+- Use strict TypeScript with proper types for everything
+- Prefer interfaces over types for object shapes
+- Use generics for reusable components
+- Always define return types for functions
+- Use proper error handling with typed errors
+
+### 2. File System Operations
+```typescript
+// Always use async/await with fs/promises
+import { readFile, writeFile, readdir, stat } from 'fs/promises';
+import { join, resolve, homedir } from 'path';
+
+// Handle errors gracefully
+try {
+  const content = await readFile(configPath, 'utf8');
+} catch (error) {
+  console.error(`Failed to read ${configPath}:`, error.message);
+}
+```
+
+### 3. AI Integration Pattern
+```typescript
+// Use Vercel AI SDK with structured outputs
+import { generateObject, generateText } from 'ai';
+import { google } from '@ai-sdk/google';
+import { z } from 'zod';
+
+// Always use schemas for structured data
+const configSchema = z.object({
+  description: z.string(),
+  dependencies: z.array(z.string()),
+  category: z.enum(['shell', 'editor', 'git', 'system']),
+  setupCommand: z.string().optional()
+});
+```
+
+### 4. CLI Design
+```typescript
+// Use Commander.js with proper typing
+import { Command } from 'commander';
+
+const program = new Command();
+program
+  .name('dotsync')
+  .description('AI-powered dotfile management')
+  .version('1.0.0');
+
+// Always provide help text and examples
+program
+  .command('scan')
+  .description('Discover and analyze system dotfiles')
+  .option('-p, --path <path>', 'specific path to scan')
+  .action(async (options) => {
+    // Implementation
+  });
+```
+
+## Code Style & Standards
+
+### Naming Conventions
+- **Files**: kebab-case (`config-parser.ts`, `github-manager.ts`)
+- **Classes**: PascalCase (`DotfileScanner`, `ConfigParser`)
+- **Functions**: camelCase (`scanConfigs`, `parseVimrc`)
+- **Constants**: SCREAMING_SNAKE_CASE (`DEFAULT_SCAN_PATHS`, `AI_PROMPTS`)
+- **Interfaces**: PascalCase with descriptive names (`DotfileConfig`, `ScanOptions`)
+
+### File Organization
+```
+src/
+├── types/           # Shared TypeScript interfaces and types
+├── scanner/         # File discovery and reading logic
+├── parsers/         # Config file parsers by type
+├── ai/             # Gemini AI integration and prompts
+├── github/         # GitHub repository management
+├── installer/      # Setup scripts and restoration
+├── utils/          # Shared utilities and helpers
+└── cli.ts          # Main CLI entry point
+```
+
+### Error Handling
+```typescript
+// Create custom error types
+export class ConfigParseError extends Error {
+  constructor(
+    message: string,
+    public readonly filePath: string,
+    public readonly originalError?: Error
+  ) {
+    super(message);
+    this.name = 'ConfigParseError';
+  }
+}
+
+// Use Result pattern for operations that can fail
+type Result<T, E = Error> = { success: true; data: T } | { success: false; error: E };
+```
+
+## Specific Implementation Rules
+
+### 1. Dotfile Discovery
+```typescript
+// Define supported dotfile types
+interface DotfileConfig {
+  path: string;
+  type: 'bash' | 'zsh' | 'vim' | 'git' | 'ssh' | 'vscode' | 'custom';
+  content: string;
+  lastModified: Date;
+  dependencies: string[];
+  aiAnalysis?: ConfigAnalysis;
+}
+
+// Use consistent scanning patterns
+const DEFAULT_SCAN_PATHS = [
+  '~/.bashrc',
+  '~/.bash_profile', 
+  '~/.zshrc',
+  '~/.zsh_profile',
+  '~/.oh-my-zsh/custom',
+  '~/.vimrc',
+  '~/.gitconfig',
+  '~/.ssh/config'
+] as const;
+```
+
+### 2. AI Prompts
+```typescript
+// Keep prompts in separate constants file
+export const AI_PROMPTS = {
+  ANALYZE_CONFIG: `
+    Analyze this configuration file and extract:
+    1. What this config does (brief description)
+    2. Required packages/dependencies
+    3. Category (shell/editor/git/system)
+    4. Setup instructions if needed
+    
+    Config file: {filename}
+    Content: {content}
+  `,
+  
+  GENERATE_SETUP_SCRIPT: `
+    Generate a bash setup script for this configuration:
+    - Check dependencies first
+    - Create backups of existing files
+    - Install packages if missing
+    - Apply configuration safely
+    
+    Config: {config}
+  `
+} as const;
+```
+
+### 3. GitHub Integration
+```typescript
+// Use Octokit with proper types
+import { Octokit } from '@octokit/rest';
+
+interface RepoStructure {
+  shell: DotfileConfig[];
+  editors: DotfileConfig[];
+  git: DotfileConfig[];
+  system: DotfileConfig[];
+  packages: PackageList;
+}
+
+// Always handle GitHub API errors
+async function createDotfileRepo(configs: DotfileConfig[]): Promise<Result<string>> {
+  try {
+    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+    // Implementation
+    return { success: true, data: repoUrl };
+  } catch (error) {
+    return { success: false, error: new Error(`GitHub API error: ${error.message}`) };
+  }
+}
+```
+
+### 4. Shell Command Execution
+```typescript
+import { execSync, spawn } from 'child_process';
+
+// Always handle command execution safely
+async function runCommand(command: string): Promise<Result<string>> {
+  try {
+    const output = execSync(command, { 
+      encoding: 'utf8',
+      timeout: 10000,
+      cwd: homedir()
+    });
+    return { success: true, data: output.trim() };
+  } catch (error) {
+    return { success: false, error: new Error(`Command failed: ${command}`) };
+  }
+}
+
+// Use spawn for interactive commands
+async function installPackages(packages: string[]): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const apt = spawn('sudo', ['apt', 'install', '-y', ...packages], {
+      stdio: 'inherit'
+    });
+    apt.on('close', (code) => {
+      code === 0 ? resolve() : reject(new Error(`Package installation failed`));
+    });
+  });
+}
+```
+
+## Testing & Development
+
+### Unit Tests
+```typescript
+// Use Jest with TypeScript
+import { describe, it, expect, beforeEach } from '@jest/globals';
+import { DotfileScanner } from '../src/scanner/dotfile-scanner';
+
+describe('DotfileScanner', () => {
+  let scanner: DotfileScanner;
+
+  beforeEach(() => {
+    scanner = new DotfileScanner();
+  });
+
+  it('should discover shell config files', async () => {
+    const configs = await scanner.scan(['~/.bashrc', '~/.zshrc']);
+    expect(configs.length).toBeGreaterThanOrEqual(1);
+    expect(configs.some(c => c.type === 'bash' || c.type === 'zsh')).toBe(true);
+  });
+});
+```
+
+### Environment Configuration
+```typescript
+// Use dotenv with validation
+import { config } from 'dotenv';
+import { z } from 'zod';
+
+config();
+
+const envSchema = z.object({
+  GOOGLE_GENERATIVE_AI_API_KEY: z.string(),
+  GITHUB_TOKEN: z.string(),
+  NODE_ENV: z.enum(['development', 'production']).default('development')
+});
+
+export const env = envSchema.parse(process.env);
+```
+
+## Performance & Security
+
+### 1. File Operations
+- Use streams for large files
+- Implement file size limits
+- Cache frequently accessed configs
+- Use proper file permissions
+
+### 2. AI API Usage
+- Implement rate limiting
+- Cache AI responses when possible
+- Use appropriate model sizes (gemini-1.5-flash for speed)
+- Handle API quota gracefully
+
+### 3. Security
+- Never commit API keys
+- Validate all file paths to prevent directory traversal
+- Sanitize shell commands
+- Create backups before modifying configs
+
+## Documentation Requirements
+
+### JSDoc Comments
+```typescript
+/**
+ * Scans system for dotfiles and analyzes them with AI
+ * @param paths - Optional specific paths to scan
+ * @param options - Scanning configuration options
+ * @returns Promise resolving to discovered dotfile configurations
+ * @throws {ConfigParseError} When file parsing fails
+ */
+async function scanConfigs(
+  paths?: string[],
+  options: ScanOptions = {}
+): Promise<DotfileConfig[]> {
+  // Implementation
+}
+```
+
+### CLI Help Text
+- Every command must have clear descriptions
+- Include usage examples
+- Document all options and flags
+- Provide troubleshooting hints
+
+## Build & Deployment
+
+### Package.json Scripts
+```json
+{
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/cli.ts",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts",
+    "format": "prettier --write src/**/*.ts",
+    "cli": "node dist/cli.js"
+  }
+}
+```
+
+### TypeScript Configuration
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
+```
+
+Remember: This is a 1-day capstone project. Prioritize core functionality (scan → AI analysis → GitHub backup → restore) over advanced features. Focus on a working MVP that demonstrates AI integration with practical system administration.
