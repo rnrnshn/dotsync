@@ -1,0 +1,55 @@
+module.exports = {
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  roots: ['<rootDir>/src'],
+  testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
+  transform: {
+    '^.+\\.ts$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.json',
+        isolatedModules: true,
+      },
+    ],
+  },
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    '!src/**/*.d.ts',
+    '!src/**/*.test.ts',
+    '!src/**/*.spec.ts',
+    '!src/**/__tests__/**',
+    '!src/**/index.ts',
+    '!src/types/**',
+  ],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'html', 'json'],
+  coverageThreshold: {
+    global: {
+      branches: 70,
+      functions: 70,
+      lines: 70,
+      statements: 70,
+    },
+  },
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+  testTimeout: 30000,
+  maxWorkers: 4,
+  verbose: true,
+  clearMocks: true,
+  restoreMocks: true,
+  resetMocks: true,
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/coverage/'],
+  coveragePathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/coverage/',
+    '/src/__tests__/',
+    '/src/types/',
+  ],
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  testEnvironmentOptions: {
+    NODE_ENV: 'test',
+  },
+  setupFiles: ['<rootDir>/src/__tests__/env-setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
+};
