@@ -1,4 +1,5 @@
 # 🤖 DotSync
+<img width="1920" height="1077" alt="image" src="https://github.com/user-attachments/assets/ef9dafc2-42be-4e1f-aa9b-2c73ae396119" />
 
 An intelligent dotfile management system that automatically discovers, understands, and synchronizes your Ubuntu configurations across machines using AI.
 
