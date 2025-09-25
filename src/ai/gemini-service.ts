@@ -154,9 +154,9 @@ export class GeminiService {
         
         Respond in JSON format:
         {
-          "recommendations": ["string"],
-          "conflicts": ["string"],
-          "improvements": ["string"]
+          recommendations: [string],
+          conflicts: [string],
+          improvements: [string]
         }
       `;
 
