@@ -57,19 +57,33 @@ Never lose your perfect terminal setup again! This AI agent:
 
 ### 1. Installation
 
+**Option A: Global Installation (Recommended)**
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/dotsync.git
 cd dotsync
 
-# Install dependencies with Yarn
-yarn install
-
-# Install Vercel AI SDK and Gemini provider
-yarn add ai @ai-sdk/google
+# Install dependencies
+npm install
 
 # Build the project
-yarn build
+npm run build
+
+# Install globally for easy access
+npm install -g .
+```
+
+**Option B: Local Development**
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/dotsync.git
+cd dotsync
+
+# Install dependencies
+npm install
+
+# Build the project
+npm run build
 ```
 
 ### 2. Configuration
@@ -83,24 +97,36 @@ GOOGLE_GENERATIVE_AI_API_KEY=your_gemini_api_key_here
 GITHUB_TOKEN=your_github_personal_access_token
 ```
 
-### 3. Scan and Backup Your Dotfiles
+### 3. Usage
 
+**With Global Installation:**
 ```bash
 # Discover and analyze your configurations
-npm run scan
+dotsync scan
 
 # Create GitHub repository and upload
-npm run backup
+dotsync backup
+
+# Restore on new machine
+dotsync restore https://github.com/username/dotfiles
+
+# Get AI explanation of a config
+dotsync explain ~/.bashrc
+
+# Check system health
+dotsync health
 ```
 
-### 4. Restore on New Machine
-
+**With Local Installation:**
 ```bash
-# Install your complete setup
+# Use npm scripts
+npm run scan
+npm run backup
 npm run restore [repository-url]
 
-# Or use interactive mode
-npm run restore --interactive
+# Or run directly
+node dist/cli.js scan
+node dist/cli.js backup
 ```
 
 ## Project Structure
@@ -122,40 +148,52 @@ dotsync/
 
 ## Usage Examples
 
-### Backup Current System
+### Basic Commands
 ```bash
-# Full system scan and backup
-dotsync backup --all
+# Scan your system for dotfiles
+dotsync scan
 
-# Backup specific configs only
-dotsync backup --configs bash,vim,git
+# Create AI-analyzed backup to GitHub
+dotsync backup
 
-# Add AI explanations to configs
-dotsync backup --explain
+# Restore from GitHub repository
+dotsync restore https://github.com/username/dotfiles
+
+# Get AI explanation of a config file
+dotsync explain ~/.bashrc
+
+# Check system health and dependencies
+dotsync health
+
+# Show system information
+dotsync info
 ```
 
-### Restore on New Machine
+### Advanced Usage
 ```bash
-# Interactive restoration
-dotsync restore https://github.com/yourusername/my-dotfiles
+# Scan specific paths
+dotsync scan --paths ~/.bashrc ~/.vimrc
 
-# Silent installation
-dotsync restore --auto --repo my-dotfiles
+# Backup with custom repository name
+dotsync backup --repo my-custom-dotfiles
 
-# Preview what will be installed
-dotsync restore --dry-run
+# Restore with dry-run to preview
+dotsync restore --dry-run https://github.com/username/dotfiles
+
+# Interactive restore mode
+dotsync restore --interactive https://github.com/username/dotfiles
 ```
 
 ### AI Features
 ```bash
-# Get AI explanation of a config file
-dotsync explain ~/.vimrc
+# Get detailed AI explanation
+dotsync explain ~/.vimrc --verbose
+
+# Generate documentation for all configs
+dotsync docs --generate
 
 # Get setup recommendations
 dotsync recommend
-
-# Generate documentation for your dotfiles
-dotsync docs --generate
 ```
 
 ## Configuration
