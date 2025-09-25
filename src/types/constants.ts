@@ -129,6 +129,29 @@ export const AI_PROMPTS = {
     3. How to use it
     4. Any important notes or warnings
   `,
+  
+  /**
+   * Prompt for generating comprehensive documentation for configuration files
+   * Includes overview, prerequisites, installation instructions, usage examples,
+   * troubleshooting tips, and related configurations in Markdown format
+   */
+  GENERATE_DOCUMENTATION: `
+    Generate comprehensive documentation for this configuration file:
+    
+    File: {filePath}
+    Type: {type}
+    Content: {content}
+    
+    Include:
+    1. Overview of what this configuration does
+    2. Prerequisites and dependencies
+    3. Installation instructions
+    4. Usage examples
+    5. Troubleshooting tips
+    6. Related configurations
+    
+    Format as Markdown.
+  `,
 } as const;
 
 /**

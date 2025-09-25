@@ -3,7 +3,7 @@
  */
 
 import { generateObject, generateText } from 'ai';
-import { google } from '@ai-sdk/google';
+import { google, GoogleGenerativeAIProvider } from '@ai-sdk/google';
 import { z } from 'zod';
 import { ConfigAnalysis, DotfileConfig, Result } from '../types';
 import { AI_PROMPTS } from '../types/constants';
@@ -185,23 +185,10 @@ export class GeminiService {
    */
   async generateDocumentation(config: DotfileConfig): Promise<Result<string, Error>> {
     try {
-      const prompt = `
-        Generate comprehensive documentation for this configuration file:
-        
-        File: ${config.path}
-        Type: ${config.type}
-        Content: ${config.content}
-        
-        Include:
-        1. Overview of what this configuration does
-        2. Prerequisites and dependencies
-        3. Installation instructions
-        4. Usage examples
-        5. Troubleshooting tips
-        6. Related configurations
-        
-        Format as Markdown.
-      `;
+      const prompt = AI_PROMPTS.GENERATE_DOCUMENTATION
+        .replace('{filePath}', config.path)
+        .replace('{type}', config.type)
+        .replace('{content}', config.content);
 
       const result = await generateText({
         model: this.model,
