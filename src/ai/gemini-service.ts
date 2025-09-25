@@ -27,9 +27,17 @@ export class GeminiService {
   private readonly model: any;
 
   constructor() {
-    this.model = google('gemini-1.5-flash', {
-      apiKey: env.googleApiKey,
-    });
+    // Validate API key before initializing the model
+    if (!env.googleApiKey || env.googleApiKey.trim() === '') {
+      throw new Error(
+        'Google API key is missing or empty. Please set GOOGLE_GENERATIVE_AI_API_KEY in your environment variables or .env file.'
+      );
+    }
+
+    // Set the API key as an environment variable for the Google AI SDK
+    process.env.GOOGLE_GENERATIVE_AI_API_KEY = env.googleApiKey;
+
+    this.model = google('gemini-1.5-flash');
   }
 
   /**
